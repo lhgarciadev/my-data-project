@@ -1,0 +1,6 @@
+data/*
+src/__pycache__/*
+tests/*
+venv/*
+/poetry.lock
+/pyproject.toml
