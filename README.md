@@ -30,11 +30,9 @@ Antes de ejecutar el pipeline, asegúrate de cumplir con los siguientes requisit
      pip install -r requirements.txt
      ```
 
-## **Configuración**
-
-1. **Editar la configuración de la base de datos**:
-   - Abre los archivos `src/create_tables.py` y `src/pipeline.py`.
-   - Actualiza la variable `db_config` con los datos de tu base de datos PostgreSQL:
+5. **Configurar la base de datos**:
+   - Asegúrate de que la base de datos `data_pipeline` exista en PostgreSQL.
+   - Verifica que las credenciales en el archivo `src/create_tables.py` y `src/pipeline.py` sean correctas:
      ```python
      db_config = {
          'dbname': 'data_pipeline',  # Nombre de la base de datos
@@ -45,7 +43,7 @@ Antes de ejecutar el pipeline, asegúrate de cumplir con los siguientes requisit
      }
      ```
 
-2. **Colocar los datos en la carpeta correcta**:
+6. **Colocar los datos en la carpeta correcta**:
    - Si no existe, crea una carpeta llamada `data` dentro del proyecto.
    - Copia los archivos CSV que quieres procesar (incluyendo `validation.csv`) en la carpeta `data/`.
 
@@ -53,38 +51,36 @@ Antes de ejecutar el pipeline, asegúrate de cumplir con los siguientes requisit
 
 Sigue estos pasos para ejecutar el pipeline:
 
-1. **Crear las tablas**:
-   - Ejecuta el script principal para crear las tablas necesarias en la base de datos:
+1. **Ejecutar el script principal**:
+   - Ejecuta el archivo `main.py`, que creará las tablas necesarias y procesará los archivos CSV:
      ```bash
      python main.py
      ```
 
-2. **Procesar los archivos**:
-   - El pipeline procesará automáticamente todos los archivos en la carpeta `data/` en orden alfabético. También incluirá el archivo `validation.csv`.
-
-3. **Verificar las estadísticas**:
-   - Durante la ejecución, el pipeline imprimirá estadísticas incrementales para cada batch procesado.
-   - Al final del proceso, mostrará las estadísticas globales acumuladas después de procesar `validation.csv`.
-
 ## **Validación de resultados**
 
-1. **Estadísticas en tiempo de ejecución**:
-   - Se imprimen las estadísticas actuales para cada batch en el siguiente formato:
-     ```
-     Estadísticas procesadas para el batch 1: total_rows=5, avg_price=47.5, min_price=14.0, max_price=87.0
-     ```
-
-2. **Estadísticas acumuladas**:
-   - Después de procesar `validation.csv`, se imprimen las estadísticas acumuladas:
-     ```
-     Estadísticas globales después de procesar validation.csv:
-     total_rows=30, avg_price=50.5, min_price=10.0, max_price=100.0
+1. **Mensajes sobre carga de datos**:
+   - Si no se encuentran registros nuevos en un batch, el pipeline imprimirá un mensaje como:
+     ```plaintext
+     No se encontraron registros nuevos en el batch 2 del archivo 2012-1.csv.
      ```
 
-3. **Advertencias por valores faltantes**:
-   - Si hay valores faltantes, se mostrará un mensaje como este:
+2. **Mensajes cuando se encuentran valores faltantes**:
+   - Si hay valores faltantes, el pipeline imprimirá un mensaje como:
+     ```plaintext
+     Advertencia: Se encontraron 3 valores faltantes en el batch 1 del archivo 2012-1.csv.
      ```
-     Advertencia: Se encontraron 3 valores faltantes en el batch 2 del archivo 2012-1.csv.
+
+3. **Estadísticas procesadas**:
+   - Cuando se procesan registros nuevos, se imprimen estadísticas como:
+     ```plaintext
+     Estadísticas procesadas para el batch 3: total_rows=5, avg_price=47.50, min_price=14.00, max_price=87.00
+     ```
+
+4. **Estadísticas globales**:
+   - Al final del pipeline, las estadísticas globales se imprimen así:
+     ```plaintext
+     Total Filas: 30, Promedio Precio: 50.50, Precio Mínimo: 10.00, Precio Máximo: 100.00
      ```
 
 ## **Detalles técnicos**
@@ -105,8 +101,5 @@ Sigue estos pasos para ejecutar el pipeline:
    - Verifica que los datos de `db_config` sean correctos.
    - Asegúrate de que el servicio PostgreSQL esté en ejecución.
 
-2. **Error `can't adapt type 'numpy.int64'`**:
-   - Este error se resolvió convirtiendo los datos a tipos nativos de Python antes de insertarlos en la base de datos, debido a los valores faltantes en los archivos CSV.
-
-3. **No se crean las tablas**:
+2. **No se crean las tablas**:
    - Asegúrate de que la base de datos `data_pipeline` exista y el usuario tenga permisos para crear tablas.
