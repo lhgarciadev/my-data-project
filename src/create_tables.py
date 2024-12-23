@@ -9,14 +9,15 @@ db_config = {
     'port': 5432
 }
 
-# Sentencias SQL para crear las tablas
+# Sentencias SQL para crear las tablas con restricciones de unicidad
 create_transactions_table = """
 CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     timestamp TIMESTAMP,
     price NUMERIC,
     user_id INTEGER,
-    load_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    load_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_transaction UNIQUE (timestamp, price, user_id)
 );
 """
 
@@ -29,7 +30,8 @@ CREATE TABLE IF NOT EXISTS stats (
     avg_price NUMERIC,
     min_price NUMERIC,
     max_price NUMERIC,
-    load_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    load_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_stat UNIQUE (file_name, batch_number)
 );
 """
 

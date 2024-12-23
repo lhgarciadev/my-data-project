@@ -5,5 +5,5 @@ if __name__ == "__main__":
     print("Creando tablas...")
     create_tables()
 
-    print("Ejecutando pipeline...")
+    print("\nEjecutando pipeline...")
     run_pipeline()

@@ -49,9 +49,7 @@ Antes de ejecutar el pipeline, asegúrate de cumplir con los siguientes requisit
 
 ## **Ejecución**
 
-Sigue estos pasos para ejecutar el pipeline:
-
-1. **Ejecutar el script principal**:
+**Ejecutar el script principal**:
    - Ejecuta el archivo `main.py`, que creará las tablas necesarias y procesará los archivos CSV:
      ```bash
      python main.py
@@ -59,25 +57,19 @@ Sigue estos pasos para ejecutar el pipeline:
 
 ## **Validación de resultados**
 
-1. **Mensajes sobre carga de datos**:
-   - Si no se encuentran registros nuevos en un batch, el pipeline imprimirá un mensaje como:
-     ```plaintext
-     No se encontraron registros nuevos en el batch 2 del archivo 2012-1.csv.
-     ```
-
-2. **Mensajes cuando se encuentran valores faltantes**:
+1. **Mensajes cuando se encuentran valores faltantes**:
    - Si hay valores faltantes, el pipeline imprimirá un mensaje como:
      ```plaintext
      Advertencia: Se encontraron 3 valores faltantes en el batch 1 del archivo 2012-1.csv.
      ```
 
-3. **Estadísticas procesadas**:
+2. **Estadísticas procesadas**:
    - Cuando se procesan registros nuevos, se imprimen estadísticas como:
      ```plaintext
      Estadísticas procesadas para el batch 3: total_rows=5, avg_price=47.50, min_price=14.00, max_price=87.00
      ```
 
-4. **Estadísticas globales**:
+3. **Estadísticas globales**:
    - Al final del pipeline, las estadísticas globales se imprimen así:
      ```plaintext
      Total Filas: 30, Promedio Precio: 50.50, Precio Mínimo: 10.00, Precio Máximo: 100.00

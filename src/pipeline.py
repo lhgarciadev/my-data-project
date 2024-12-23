@@ -36,32 +36,18 @@ def process_file(file_path):
                         'user_id': int
                     })
 
-                    # Insertar registros nuevos en transactions
-                    new_records_count = 0
-                    for _, row in batch_df.iterrows():
-                        cursor.execute(
-                            """
-                            SELECT 1 FROM transactions
-                            WHERE timestamp = %s AND price = %s AND user_id = %s
-                            """,
-                            (row['timestamp'], row['price'], row['user_id'])
-                        )
-                        if cursor.fetchone():
-                            continue
-
-                        cursor.execute(
-                            """
-                            INSERT INTO transactions (timestamp, price, user_id, load_date)
-                            VALUES (%s, %s, %s, %s)
-                            """,
+                    # Insertar registros nuevos en transactions usando ON CONFLICT
+                    cursor.executemany(
+                        """
+                        INSERT INTO transactions (timestamp, price, user_id, load_date)
+                        VALUES (%s, %s, %s, %s)
+                        ON CONFLICT (timestamp, price, user_id) DO NOTHING
+                        """,
+                        [
                             (row['timestamp'], row['price'], row['user_id'], datetime.now())
-                        )
-                        new_records_count += 1
-
-                    # Si no hay registros nuevos, omitir estadísticas
-                    if new_records_count == 0:
-                        print(f"No se encontraron registros nuevos en el batch {batch_idx} del archivo {file_path.name}.")
-                        continue
+                            for _, row in batch_df.iterrows()
+                        ]
+                    )
 
                     # Calcular estadísticas incrementales
                     total_rows = len(batch_df)
@@ -69,11 +55,12 @@ def process_file(file_path):
                     min_price = float(batch_df["price"].min())
                     max_price = float(batch_df["price"].max())
 
-                    # Insertar estadísticas en stats
+                    # Insertar estadísticas en stats usando ON CONFLICT
                     cursor.execute(
                         """
                         INSERT INTO stats (file_name, batch_number, total_rows, avg_price, min_price, max_price, load_date)
                         VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        ON CONFLICT (file_name, batch_number) DO NOTHING
                         """,
                         (file_path.name, batch_idx, total_rows, avg_price, min_price, max_price, datetime.now())
                     )
@@ -108,17 +95,17 @@ def run_pipeline():
     files = sorted(f for f in data_dir.iterdir() if f.suffix == ".csv" and "validation" not in f.name)
 
     for file in files:
-        print(f"Procesando archivo: {file.name}")
+        print(f"\nProcesando archivo: {file.name}")
         process_file(file)
 
     # Consultar estadísticas después de procesar los archivos principales
-    print("Estadísticas globales después de procesar los archivos principales:")
+    print("\nEstadísticas globales después de procesar los archivos principales:")
     query_stats()
 
     # Procesar archivo de validación
-    print("Procesando archivo de validación...")
+    print("\nProcesando archivo de validación...")
     process_file(data_dir / "validation.csv")
 
     # Consultar estadísticas después de procesar validation.csv
-    print("Estadísticas globales después de procesar validation.csv:")
+    print("\nEstadísticas globales después de procesar validation.csv:")
     query_stats()
