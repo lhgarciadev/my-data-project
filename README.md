@@ -99,4 +99,3 @@ Antes de ejecutar el pipeline, asegúrate de cumplir con los siguientes requisit
 
 2. **No se crean las tablas**:
    - Asegúrate de que la base de datos `data_pipeline` exista y el usuario tenga permisos para crear tablas.
-   - 
