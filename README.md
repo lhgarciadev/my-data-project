@@ -25,32 +25,30 @@ Antes de ejecutar el pipeline, asegúrate de cumplir con los siguientes requisit
      ```
 
 4. **Instalar las dependencias**:
-   - Instala las dependencias listadas en `requirements.txt`:
+   - Instala las dependencias listadas en [requirements.txt](http://_vscodecontentref_/0):
      ```bash
      pip install -r requirements.txt
      ```
 
 5. **Configurar la base de datos**:
    - Asegúrate de que la base de datos `data_pipeline` exista en PostgreSQL.
-   - Verifica que las credenciales en el archivo `src/create_tables.py` y `src/pipeline.py` sean correctas:
-     ```python
-     db_config = {
-         'dbname': 'data_pipeline',  # Nombre de la base de datos
-         'user': 'postgres',         # Usuario de la base de datos
-         'password': 'password',     # Contraseña del usuario
-         'host': 'localhost',        # Dirección del servidor
-         'port': 5432                # Puerto del servidor
-     }
+   - Verifica que las credenciales en el archivo [.env](http://_vscodecontentref_/1) sean correctas:
+     ```env
+     DB_NAME=data_pipeline
+     DB_USER=postgres
+     DB_PASSWORD=password
+     DB_HOST=localhost
+     DB_PORT=5432
      ```
 
 6. **Colocar los datos en la carpeta correcta**:
-   - Si no existe, crea una carpeta llamada `data` dentro del proyecto.
-   - Copia los archivos CSV que quieres procesar (incluyendo `validation.csv`) en la carpeta `data/`.
+   - Si no existe, crea una carpeta llamada [data](http://_vscodecontentref_/2) dentro del proyecto.
+   - Copia los archivos CSV que quieres procesar (incluyendo `validation.csv`) en la carpeta [data](http://_vscodecontentref_/3).
 
 ## **Ejecución**
 
 **Ejecutar el script principal**:
-   - Ejecuta el archivo `main.py`, que creará las tablas necesarias y procesará los archivos CSV:
+   - Ejecuta el archivo [main.py](http://_vscodecontentref_/4), que creará las tablas necesarias y procesará los archivos CSV:
      ```bash
      python main.py
      ```
@@ -87,6 +85,12 @@ Antes de ejecutar el pipeline, asegúrate de cumplir con los siguientes requisit
 3. **Manejo de valores faltantes**:
    - Los valores faltantes se detectan y registran, pero no se eliminan ni reemplazan.
 
+4. **Pruebas Unitarias**:
+   - Se han añadido pruebas unitarias para asegurar la corrección de cada función. Para ejecutar las pruebas:
+     ```bash
+     python -m unittest discover
+     ```
+
 ## **Problemas comunes**
 
 1. **Error de conexión a la base de datos**:
@@ -95,3 +99,4 @@ Antes de ejecutar el pipeline, asegúrate de cumplir con los siguientes requisit
 
 2. **No se crean las tablas**:
    - Asegúrate de que la base de datos `data_pipeline` exista y el usuario tenga permisos para crear tablas.
+   - 

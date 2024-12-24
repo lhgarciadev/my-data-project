@@ -1,15 +1,20 @@
+import os
 import psycopg2
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
+from dotenv import load_dotenv
 
-# Configuración de la conexión a la base de datos
+# Cargar variables desde el archivo .env
+load_dotenv()
+
+# Configuración de la base de datos
 db_config = {
-    'dbname': 'data_pipeline',
-    'user': 'postgres',
-    'password': 'password',
-    'host': 'localhost',
-    'port': 5432
+    'dbname': os.getenv('DB_NAME', 'data_pipeline'),
+    'user': os.getenv('DB_USER', 'postgres'),
+    'password': os.getenv('DB_PASSWORD', 'password'),
+    'host': os.getenv('DB_HOST', 'localhost'),
+    'port': int(os.getenv('DB_PORT', 5432))
 }
 
 BATCH_SIZE = 5  # Tamaño del batch
@@ -29,14 +34,14 @@ def process_file(file_path):
                     if missing_values > 0:
                         print(f"Advertencia: Se encontraron {missing_values} valores faltantes en el batch {batch_idx} del archivo {file_path.name}.")
 
-                    # Convertir tipos de datos a formatos nativos de Python
+                    # Convertir tipos de datos a formatos nativos de Python debido al cambio generado por Pandas con datos faltantes
                     batch_df = batch_df.astype({
                         'timestamp': 'datetime64[ns]',
                         'price': float,
                         'user_id': int
                     })
 
-                    # Insertar registros nuevos en transactions usando ON CONFLICT
+                    # Insertar registros nuevos en transactions
                     cursor.executemany(
                         """
                         INSERT INTO transactions (timestamp, price, user_id, load_date)
@@ -55,7 +60,7 @@ def process_file(file_path):
                     min_price = float(batch_df["price"].min())
                     max_price = float(batch_df["price"].max())
 
-                    # Insertar estadísticas en stats usando ON CONFLICT
+                    # Insertar estadísticas en stats
                     cursor.execute(
                         """
                         INSERT INTO stats (file_name, batch_number, total_rows, avg_price, min_price, max_price, load_date)

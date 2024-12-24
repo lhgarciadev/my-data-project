@@ -1,12 +1,17 @@
+import os
 import psycopg2
+from dotenv import load_dotenv
 
-# Configuración de la conexión a la base de datos
+# Cargar variables desde el archivo .env
+load_dotenv()
+
+# Configuración de la base de datos
 db_config = {
-    'dbname': 'data_pipeline',
-    'user': 'postgres',
-    'password': 'password',
-    'host': 'localhost',
-    'port': 5432
+    'dbname': os.getenv('DB_NAME', 'data_pipeline'),
+    'user': os.getenv('DB_USER', 'postgres'),
+    'password': os.getenv('DB_PASSWORD', 'password'),
+    'host': os.getenv('DB_HOST', 'localhost'),
+    'port': int(os.getenv('DB_PORT', 5432))
 }
 
 # Sentencias SQL para crear las tablas con restricciones de unicidad
